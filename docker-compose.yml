@@ -1,0 +1,36 @@
+version: "3"
+services:
+  node:
+    container_name: node
+    restart: always
+    build: ./node
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+      - frontend-network
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    networks:
+      - backend-network
+    volumes:
+      - ./mongo/data:/data/db
+  nginx:
+    container_name: nginx
+    restart: always
+    build: 
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "8888:80"
+    depends_on:
+      - node
+    networks:
+      - frontend-network
+    volumes:
+      - ./nginx/log:/var/log/nginx
+networks:
+  backend-network:
+  frontend-network:
